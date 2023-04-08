@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="gameSDL" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/gameSDL" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="include" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/gameSDL" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="include/BaseObject.h" />
+		<Unit filename="include/BulletObject.h" />
+		<Unit filename="include/CommonFunc.h" />
+		<Unit filename="include/ExplosionObject.h" />
+		<Unit filename="include/Geometric.h" />
+		<Unit filename="include/ImpTimer.h" />
+		<Unit filename="include/MainObject.h" />
+		<Unit filename="include/PlayerPower.h" />
+		<Unit filename="include/TextObject.h" />
+		<Unit filename="include/ThreatsObjects.h" />
+		<Unit filename="include/game_map.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="src/BaseObject.cpp" />
+		<Unit filename="src/BulletObject.cpp" />
+		<Unit filename="src/CommonFunc.cpp" />
+		<Unit filename="src/ExplosionObject.cpp" />
+		<Unit filename="src/Geometric.cpp" />
+		<Unit filename="src/ImpTimer.cpp" />
+		<Unit filename="src/MainObject.cpp" />
+		<Unit filename="src/PlayerPower.cpp" />
+		<Unit filename="src/TextObject.cpp" />
+		<Unit filename="src/ThreatsObjects.cpp" />
+		<Unit filename="src/game_map.cpp" />
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

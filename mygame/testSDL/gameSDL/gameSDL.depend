@@ -1,0 +1,92 @@
+# depslib dependency file v1.0
+1680837695 source:c:\users\my pc\downloads\mygame\testsdl\gamesdl\main.cpp
+	"BaseObject.h"
+	<bits/stdc++.h>
+	<windows.h>
+	"game_map.h"
+	"MainObject.h"
+	"ImpTimer.h"
+	"ThreatsObjects.h"
+	"ExplosionObject.h"
+	"TextObject.h"
+	"PlayerPower.h"
+	"Geometric.h"
+
+1679149268 source:c:\users\my pc\downloads\mygame\testsdl\gamesdl\src\commonfunc.cpp
+	"CommonFunc.h"
+
+1680791833 c:\users\my pc\downloads\mygame\testsdl\gamesdl\include\commonfunc.h
+	<iostream>
+	<vector>
+	<string>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_ttf.h>
+
+1677588690 source:c:\users\my pc\downloads\mygame\testsdl\gamesdl\src\baseobject.cpp
+	"BaseObject.h"
+
+1680793050 c:\users\my pc\downloads\mygame\testsdl\gamesdl\include\baseobject.h
+	"CommonFunc.h"
+
+1680791833 source:c:\users\my pc\downloads\mygame\testsdl\gamesdl\src\game_map.cpp
+	"game_map.h"
+	<iostream>
+
+1680789873 c:\users\my pc\downloads\mygame\testsdl\gamesdl\include\game_map.h
+	"BaseObject.h"
+
+1680865194 c:\users\my pc\downloads\mygame\testsdl\gamesdl\include\mainobject.h
+	<vector>
+	"BaseObject.h"
+	"BulletObject.h"
+
+1680841571 source:c:\users\my pc\downloads\mygame\testsdl\gamesdl\src\mainobject.cpp
+	"MainObject.h"
+	<iostream>
+	"BaseObject.h"
+
+1677600306 source:c:\users\my pc\downloads\mygame\testsdl\gamesdl\src\imptimer.cpp
+	"ImpTimer.h"
+	"BaseObject.h"
+
+1677600418 c:\users\my pc\downloads\mygame\testsdl\gamesdl\include\imptimer.h
+
+1678374348 source:c:\users\my pc\downloads\mygame\testsdl\gamesdl\src\bulletobject.cpp
+	"BulletObject.h"
+
+1678374235 c:\users\my pc\downloads\mygame\testsdl\gamesdl\include\bulletobject.h
+	"BaseObject.h"
+
+1678634245 source:c:\users\my pc\downloads\mygame\testsdl\gamesdl\src\threatsobjects.cpp
+	"ThreatsObjects.h"
+
+1678631471 c:\users\my pc\downloads\mygame\testsdl\gamesdl\include\threatsobjects.h
+	"BaseObject.h"
+	"BulletObject.h"
+	<bits/stdc++.h>
+
+1678691934 source:c:\users\my pc\downloads\mygame\testsdl\gamesdl\src\explosionobject.cpp
+	"ExplosionObject.h"
+
+1678691386 c:\users\my pc\downloads\mygame\testsdl\gamesdl\include\explosionobject.h
+	"BaseObject.h"
+
+1679235834 source:c:\users\my pc\downloads\mygame\testsdl\gamesdl\src\textobject.cpp
+	"TextObject.h"
+
+1679233760 c:\users\my pc\downloads\mygame\testsdl\gamesdl\include\textobject.h
+	"BaseObject.h"
+
+1679060915 source:c:\users\my pc\downloads\mygame\testsdl\gamesdl\src\playerpower.cpp
+	"PlayerPower.h"
+
+1678986157 c:\users\my pc\downloads\mygame\testsdl\gamesdl\include\playerpower.h
+	"BaseObject.h"
+
+1679129473 source:c:\users\my pc\downloads\mygame\testsdl\gamesdl\src\geometric.cpp
+	"Geometric.h"
+
+1679129477 c:\users\my pc\downloads\mygame\testsdl\gamesdl\include\geometric.h
+	"BaseObject.h"
+
