@@ -36,7 +36,7 @@ numerios threats and win the game
   
   +) Create effects for characters to move left, right, jump up with multi-frame images
   
-  +) Characters can change ammo types (3 types of bullets)
+  +) Characters can change ammo types (2 types of bullets)
   
   +) Use font to display money, score, time,...
   
