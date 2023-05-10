@@ -13,7 +13,7 @@ ExplosionObject::~ExplosionObject()
     //dtor
 }
 
-bool ExplosionObject::LoadImg(std::string path , SDL_Renderer* screen)
+bool ExplosionObject::LoadImg(std::string path , SDL_Renderer* screen) //load ảnh vụ nổ
 {
     bool ret = BaseObject::LoadImg(path , screen);
     if (ret != NULL)
@@ -25,7 +25,7 @@ bool ExplosionObject::LoadImg(std::string path , SDL_Renderer* screen)
     return ret;
 }
 
-void ExplosionObject::set_clip()
+void ExplosionObject::set_clip() //cắt clip vụ nổ
 {
     if (frame_width_ > 0 && frame_height_ > 0)
     {
@@ -71,7 +71,7 @@ void ExplosionObject::set_clip()
     }
 }
 
-void ExplosionObject::Show(SDL_Renderer* screen)
+void ExplosionObject::Show(SDL_Renderer* screen) //show frame vụ nổ
 {
     SDL_Rect* current_clip = &frame_clip_[frame_];
     SDL_Rect render_quad = {rect_.x , rect_.y , frame_width_ , frame_height_};

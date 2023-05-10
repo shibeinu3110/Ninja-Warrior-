@@ -16,7 +16,7 @@ void PlayerPower::AddPos(const int& xp)
     pos_list_.push_back(xp);
 }
 
-void PlayerPower::Init (SDL_Renderer* screen)
+void PlayerPower::Init (SDL_Renderer* screen) //khởi tao tim và vị trí tim
 {
     LoadImg("img//player_pw.png" , screen);
     number_ = 3 ;
@@ -39,7 +39,7 @@ void PlayerPower::Show(SDL_Renderer* screen)
     }
 }
 
-void PlayerPower::Decrease()
+void PlayerPower::Decrease() //xóa tim
 {
     number_--;
     pos_list_.pop_back();
@@ -47,7 +47,8 @@ void PlayerPower::Decrease()
 
 void PlayerPower::Increase()
 {
-    number_++;
+    number_ ++ ;
+
     int last_pos = pos_list_.back();
     last_pos += 40;
     pos_list_.push_back(last_pos);
@@ -64,7 +65,7 @@ PlayerMoney::~PlayerMoney()
 
 }
 
-void PlayerMoney::Init(SDL_Renderer* screen)
+void PlayerMoney::Init(SDL_Renderer* screen) //load ảnh money
 {
     bool ret = LoadImg("img//money.png" , screen);
 
@@ -77,7 +78,33 @@ void PlayerMoney::Show (SDL_Renderer* screen)
     Render(screen);
 }
 
+PlayerMusic::PlayerMusic()
+{
+    x_pos_ = 900;
+    y_pos_ = 5;
+}
 
+PlayerMusic::~PlayerMusic()
+{
+
+}
+
+void PlayerMusic::InitMute(SDL_Renderer* screen)
+{
+    bool ret = LoadImg("img//mute.png" , screen);
+}
+
+void PlayerMusic::InitUnmute(SDL_Renderer* screen)
+{
+    bool ret = LoadImg("img//unmute.png" , screen);
+}
+
+void PlayerMusic::Show (SDL_Renderer* screen)
+{
+    rect_.x = x_pos_;
+    rect_.y = y_pos_;
+    Render(screen);
+}
 
 
 

@@ -24,6 +24,7 @@ MainObject::MainObject()
     money_count = 0;
 
     status_ = WALK_RIGHT;
+    mute_ = false;
 }
 
 MainObject::~MainObject()
@@ -136,7 +137,7 @@ void MainObject :: Show (SDL_Renderer* des)
     }
 }
 
-void MainObject :: HandleInputAction (SDL_Event events , SDL_Renderer* screen)
+void MainObject :: HandleInputAction(SDL_Event events , SDL_Renderer* screen, Mix_Chunk* player_sound[10] )
 {
     if (events.type == SDL_KEYDOWN)
     {
@@ -147,7 +148,13 @@ void MainObject :: HandleInputAction (SDL_Event events , SDL_Renderer* screen)
                 status_ = WALK_RIGHT;
                 input_type_.right_ = 1; //neu phim nao nhan trc thi phim con lai se bang 0
                 input_type_.left_ =0;
+
                 UpdateImagePlayer (screen);
+                if (on_ground_ == true && mute_ == false)
+                {
+                    Mix_PlayChannel(-1, player_sound[6],0);
+                    Mix_PlayChannel(-1,player_sound[7], 0);
+                }
             }
             break;
         case SDLK_LEFT ://khi an nut
@@ -155,7 +162,14 @@ void MainObject :: HandleInputAction (SDL_Event events , SDL_Renderer* screen)
                 status_ = WALK_LEFT;
                 input_type_.left_ = 1;
                 input_type_.right_ =0;
+
                 UpdateImagePlayer (screen);
+
+                if (on_ground_ == true && mute_ == false)
+                {
+                    Mix_PlayChannel(-1, player_sound[6],0);
+                    Mix_PlayChannel(-1,player_sound[7], 0);
+                }
             }
             break;
 
@@ -185,9 +199,23 @@ void MainObject :: HandleInputAction (SDL_Event events , SDL_Renderer* screen)
 
     if ( events.type == SDL_KEYDOWN ) // khi an nut
     {
+
         if ( events.key.keysym.sym == SDLK_UP)
         {
             input_type_.jump_ =1; //xu ly nhay
+            if (mute_ == false )
+            {
+                Mix_PlayChannel (-1, player_sound[4] , 0);
+            }
+        }
+        int dem = 0;
+        if (events.key.keysym.sym == SDLK_m)
+        {
+            mute_ = true;
+        }
+        if (events.key.keysym.sym == SDLK_u)
+        {
+            mute_ = false;
         }
     }
     //setting bullet
@@ -195,17 +223,18 @@ void MainObject :: HandleInputAction (SDL_Event events , SDL_Renderer* screen)
     {
         if (events.key.keysym.sym == SDLK_SPACE) //xu ly ban
         {
-            BulletObject* p_bullet = new BulletObject() ; //tao 1 vien dan moi
+            BulletObject* p_bullet = new BulletObject() ;
             p_bullet->set_bullet_type (BulletObject::SPHERE_BULLET);
-            p_bullet->LoadImg ("img//sphere_bullet.png" , screen); //load anh vien dan
+            p_bullet->LoadImg ("img//sphere_bullet.png" , screen);
+            //tạo viên đạn và nạp ảnh viên đạn vào băng
 
-            int x_player = x_pos_ - map_x_;
+            int x_player = x_pos_ - map_x_; //vị trí nhân vật theo chiều x và y
             int y_player = y_pos_ - map_y_;
 
             if (status_ == WALK_LEFT)
             {
-                p_bullet->set_bullet_dir (BulletObject::DIR_LEFT);
-                p_bullet->SetRect (x_player  , y_player + height_frame_*0.3);
+                p_bullet->set_bullet_dir (BulletObject::DIR_LEFT); //set hướng bắn
+                p_bullet->SetRect (x_player , y_player + height_frame_*0.3); //set vị trsi bắn cho đạn
             }
             else if (status_== WALK_RIGHT)
             {
@@ -215,32 +244,39 @@ void MainObject :: HandleInputAction (SDL_Event events , SDL_Renderer* screen)
 
 
 
-            p_bullet->set_x_val(20); //toc do dan
+            p_bullet->set_x_val(15); //toc do dan
             p_bullet->set_y_val(20);
+
             p_bullet->set_is_move(true);
 
-            p_bullet_list_.push_back(p_bullet); //nap dan vao bang
-
+            p_bullet_list_.push_back(p_bullet);
+            //nhập từng viên đạn vào băng đạn
+            if (mute_ == false)
+            {
+                Mix_PlayChannel(-1, player_sound[8], 0); // loop bat dau tu 0
+            }
         }
     }
 }
 
 void MainObject:: HandleBullet (SDL_Renderer* des)
 {
-    for (int i=0 ; i< p_bullet_list_.size() ; i++) //chay tung vien trong bang dan
+
+    for (int i=0 ; i< p_bullet_list_.size() ; i++)
     {
         BulletObject* p_bullet = p_bullet_list_.at(i);
         if (p_bullet != NULL)
         {
             if (p_bullet->get_is_move() == true)
             {
-                p_bullet->HandleMove(SCREEN_WIDTH , SCREEN_HEIGHT); //di chuyen vien dan
+                p_bullet->HandleMovePlayer(SCREEN_WIDTH , SCREEN_HEIGHT); //di chuyen vien dan
 
                 p_bullet->Render (des);
             }
             else
             {
-                p_bullet_list_.erase(p_bullet_list_.begin()+i); //huy khi ra khoi man hinh
+                p_bullet_list_.erase(p_bullet_list_.begin()+i);
+                //hủy viên đạn khi nó ra khỏi màn hình
                 if (p_bullet != NULL)
                 {
                     delete p_bullet;
@@ -251,13 +287,13 @@ void MainObject:: HandleBullet (SDL_Renderer* des)
     }
 }
 
-void MainObject::RemoveBullet (const int& idx)
+void MainObject::RemoveBullet (const int& idx) //xóa viên đạn thứ idx
 {
     int size = p_bullet_list_.size();
-    if (size > 0 && idx < size)
+    if (size > 0 && idx < size) //viên đạn k đc vượt quá size
     {
         BulletObject* p_bullet = p_bullet_list_.at(idx);
-        p_bullet_list_.erase(p_bullet_list_.begin() + idx); //loai bo vien dan thu i
+        p_bullet_list_.erase(p_bullet_list_.begin() + idx); //loai bo vien dan thu idx
 
 
         if (p_bullet )
@@ -269,7 +305,7 @@ void MainObject::RemoveBullet (const int& idx)
     }
 }
 
-void MainObject :: DoPlayer (Map& map_data) //xử lý di chuyển nhân vật
+void MainObject :: DoPlayer (Map& map_data , Mix_Chunk* player_sound[10]) //xử lý di chuyển nhân vật
 {
     if (come_back_time_ == 0) //neu nhu khong roi
     {
@@ -300,7 +336,7 @@ void MainObject :: DoPlayer (Map& map_data) //xử lý di chuyển nhân vật
         input_type_.jump_ = 0; //khi nhay xong thi phai dung
     }
 
-    CheckToMap (map_data);
+    CheckToMap (map_data, player_sound);
     CenterEntityOnMap (map_data);
     }
 
@@ -351,7 +387,7 @@ void MainObject :: CenterEntityOnMap (Map& map_data)
 
 }
 
-void MainObject :: CheckToMap (Map& map_data) //kiem tra va cham
+void MainObject :: CheckToMap (Map& map_data , Mix_Chunk* player_sound[10]) //kiem tra va cham
 {
     //kiểm tra từ a đến b theo chiều x
     int x1 =0 ;
@@ -392,6 +428,10 @@ void MainObject :: CheckToMap (Map& map_data) //kiem tra va cham
                 //bien mat khi an
                 map_data.tile[y1][x2] = 0;
                 map_data.tile[y2][x2] = 0;
+                if (mute_ == false)
+                {
+                    Mix_PlayChannel(-1, player_sound[2],0);
+                }
                 increase_money();
             }
             else
@@ -417,6 +457,10 @@ void MainObject :: CheckToMap (Map& map_data) //kiem tra va cham
                 map_data.tile[y1][x1] = 0;
                 map_data.tile[y2][x1] = 0;
                 increase_money();
+                if (mute_ == false)
+                {
+                    Mix_PlayChannel(-1, player_sound[2],0);
+                }
             }
             else
             {
@@ -450,6 +494,10 @@ void MainObject :: CheckToMap (Map& map_data) //kiem tra va cham
                 map_data.tile[y2][x1] = 0;
                 map_data.tile[y2][x2] = 0;
                 increase_money();
+                if (mute_ == false)
+                {
+                    Mix_PlayChannel(-1, player_sound[2],0);
+                }
             }
             else
             {
@@ -474,6 +522,10 @@ void MainObject :: CheckToMap (Map& map_data) //kiem tra va cham
                 map_data.tile[y1][x1] = 0;
                 map_data.tile[y1][x2] = 0;
                 increase_money();
+                if (mute_ == false)
+                {
+                    Mix_PlayChannel(-1, player_sound[2],0);
+                }
             }
             else
             {

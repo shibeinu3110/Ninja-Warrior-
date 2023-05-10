@@ -18,6 +18,7 @@ ThreatsObjects::ThreatsObjects()
     animation_b_ = 0;
     input_type_.left_ = 0; //luon quay sang trai
     type_move_ = STATIC_THREAT;
+    dir_threats_ = 0;
 }
 
 ThreatsObjects::~ThreatsObjects()
@@ -112,7 +113,7 @@ void ThreatsObjects :: Show (SDL_Renderer* des)
     }
 }
 
-void ThreatsObjects:: DoPlayer (Map& gMap)
+void ThreatsObjects:: DoPlayer (Map& gMap) //xử lý hình ảnh của threat khi có skien bàn phím
 {
     if (come_back_time_ == 0)
     {
@@ -133,6 +134,16 @@ void ThreatsObjects:: DoPlayer (Map& gMap)
         }
 
         CheckToMap(gMap);
+        if (input_type_.jump_ == 1) //khi nhay len
+        {
+            if (on_ground_ == true)
+            {
+                y_val_ = -18 ;
+
+            }
+            on_ground_ = false ;
+            input_type_.jump_ = 0; //khi nhay xong thi phai dung
+        }
     }
     else if (come_back_time_ >0)
     {
@@ -290,8 +301,21 @@ void ThreatsObjects :: CheckToMap (Map& gMap)
     }
 }
 
-void ThreatsObjects:: ImpMoveType(SDL_Renderer* screen)
+void ThreatsObjects:: ImpMoveType(SDL_Renderer* screen ,Map& gMap )
 {
+    int x1 =0 ;
+    int x2 =0 ;
+
+    int y1 =0 ;
+    int y2 =0 ;
+    int height_min = height_frame_ < TILE_SIZE ? height_frame_ :TILE_SIZE;
+    x1 = (x_pos_ + x_val_) / TILE_SIZE; //kiem tra dang xem nhan vat dang dung o o bao nhieu
+    x2 = (x_pos_ + x_val_ + width_frame_ -1) / TILE_SIZE ; // -1 de tach nhan vat va vien cua tile map
+
+    y1 = (y_pos_) /TILE_SIZE ;
+    y2 = (y_pos_ + height_min -1 ) /TILE_SIZE ;
+
+
     if (type_move_ == STATIC_THREAT)
     {
         //khong lam gi
@@ -300,18 +324,26 @@ void ThreatsObjects:: ImpMoveType(SDL_Renderer* screen)
     {
         if (on_ground_ == true)
         {
-            if (x_pos_ > animation_b_ +100)
+
+            if (x_pos_ > animation_b_ +100 || gMap.tile[y1][x2] != BLANK_TILE
+                ||gMap.tile[y2][x2] != BLANK_TILE )
             {
+                dir_threats_ = WALK_RIGHT;
+                input_type_.jump_ =1;
                 input_type_.left_ =1; //doi chieu
                 input_type_.right_ = 0;
                 LoadImg("img//threat_left.png" , screen);
             }
-            else if (x_pos_ < animation_a_-100)
+            else if (x_pos_ < animation_a_-100 ||gMap.tile[y1][x1] != BLANK_TILE
+                     ||gMap.tile[y2][x1] != BLANK_TILE )
             {
+                dir_threats_ = WALK_LEFT;
+                input_type_.jump_ =1;
                 input_type_.left_ = 0;
                 input_type_.right_ =1 ; //doi chieu sang phai
                 LoadImg("img//threat_right.png" , screen);
             }
+
         }
         else
         {
@@ -327,19 +359,21 @@ void ThreatsObjects::InitBullet (BulletObject* p_bullet , SDL_Renderer* screen)
 {
     if (p_bullet != NULL)
     {
-      p_bullet->set_bullet_type(BulletObject::LASER_BULLET);
-      bool ret = p_bullet->LoadImgBullet(screen);
+      //p_bullet->set_bullet_type(BulletObject::LASER_BULLET);
+      bool ret = p_bullet->LoadImgBullet(screen);//load ảnh laser bullet
 
       if (ret ==true)
       {
         int x_th = x_pos_ - map_x_;
         int y_th = y_pos_ - map_y_;
 
-        p_bullet->set_is_move(true);
-        p_bullet->set_bullet_dir(BulletObject::DIR_LEFT);
-        p_bullet->SetRect(x_th + 5 , y_th + 10);
+        p_bullet->set_is_move(true); //set di chuyển
+
+        p_bullet->set_bullet_dir(BulletObject::DIR_LEFT); //set hướng
+        p_bullet->SetRect(x_th + 5 , y_th + 10); //set rect
         p_bullet->set_x_val(15); //toc do dan
         bullet_list_.push_back(p_bullet);
+        //đẩy đạn vào băng
       }
     }
 }
@@ -353,8 +387,8 @@ void ThreatsObjects::MakeBullet(SDL_Renderer* screen , const int& x_limit , cons
         {
             if (p_bullet->get_is_move() == true)
             {
-                int bullet_distance = rect_.x - p_bullet->GetRect().x +width_frame_;
-                if (bullet_distance < 300 && bullet_distance > 0) //trong khoang 300 moi ban
+                int bullet_distance = rect_.x - p_bullet->GetRect().x +width_frame_ ;
+                if (bullet_distance < 300 && bullet_distance > -300) //trong khoang 600 moi ban
                 {
                     p_bullet->HandleMove (x_limit , y_limit);
                     p_bullet->Render(screen);
@@ -366,11 +400,18 @@ void ThreatsObjects::MakeBullet(SDL_Renderer* screen , const int& x_limit , cons
             }
             else
             {
-                int x_th = x_pos_ - map_x_;
-                int y_th = y_pos_ - map_y_;
-
-                p_bullet->set_is_move (true);
-                p_bullet->SetRect(x_th + 5 ,  y_th + 10);
+                p_bullet -> set_is_move(true);
+                p_bullet -> SetRect(rect_.x + 5, rect_.y + 10);
+                if (input_type_.left_ == 1)
+                {
+                    p_bullet -> set_bullet_dir(BulletObject::DIR_LEFT);
+                    p_bullet -> SetRect(rect_.x + 5, rect_.y + 10);
+                }
+                else if (input_type_.right_ == 1)
+                {
+                    p_bullet -> set_bullet_dir(BulletObject::DIR_RIGHT);
+                    p_bullet -> SetRect(rect_.x + 20, rect_.y + 10);
+                }
             }
         }
     }
