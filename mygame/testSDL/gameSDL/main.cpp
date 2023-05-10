@@ -11,13 +11,16 @@
 #include "PlayerPower.h"
 #include "Geometric.h"
 
+
 BaseObject g_background ;
 TTF_Font* font_time = NULL;
 TTF_Font* font_menu = NULL;
+TTF_Font* font_tuto = NULL;
 using namespace std;
 
 bool InitData ()
 {
+
     bool success = true;
     int ret = SDL_Init (SDL_INIT_VIDEO);
     if (ret < 0)
@@ -53,11 +56,37 @@ bool InitData ()
 
         font_time = TTF_OpenFont("font//dlxfont_.ttf" , 15 );
         font_menu = TTF_OpenFont("font//Haverbrooke.otf" , 40 );
+        font_tuto = TTF_OpenFont("font//Keylock_Fighter.ttf" , 40 );
 
         if (font_time == NULL || font_menu == NULL)
         {
             success = false;
         }
+    }
+    if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1)
+    {
+        return false;
+    }
+    else
+    {
+        // read file wav audio
+        g_sound_player[8] = Mix_LoadWAV("music//sound_gunShot.wav");
+
+        g_sound_player[0] = Mix_LoadWAV("music//player_bullet_load.wav");
+        g_sound_player[2] = Mix_LoadWAV("music//player_coin_eating.wav");
+
+        g_sound_player[3] = Mix_LoadWAV("music//player_hurt.wav");
+        g_sound_player[4] = Mix_LoadWAV("music//player_jump.wav");
+        g_sound_player[5] = Mix_LoadWAV("music//player_landing.wav");
+        g_sound_player[6] = Mix_LoadWAV("music//step1.wav");
+        g_sound_player[7] = Mix_LoadWAV("music//step2.wav");
+
+        g_sound_player[9] = Mix_LoadWAV("music//failed.wav");
+
+        g_general_music[0] = Mix_LoadWAV("music//snd_danger.wav");
+
+
+        g_sound_exp[0] = Mix_LoadWAV("music//exp.wav");
     }
     return success;
 }
@@ -90,7 +119,7 @@ std::vector<ThreatsObjects*> MakeThreadList()
 {
     std::vector<ThreatsObjects*> list_threats;
 
-    ThreatsObjects* dynamic_threats = new ThreatsObjects[20];
+    ThreatsObjects* dynamic_threats = new ThreatsObjects[20]; //quái di chuyển
     for (int i=0;i<20;i++)
     {
         ThreatsObjects* p_threat = (dynamic_threats + i);
@@ -105,25 +134,33 @@ std::vector<ThreatsObjects*> MakeThreadList()
             int pos2 = p_threat->get_x_pos() - 60;
             p_threat->SetAnimationPos(pos1 , pos2);
             p_threat->set_input_left(1);
+            BulletObject* p_bullet = new BulletObject();
+
+            p_bullet->set_bullet_type(BulletObject::LIL_BULLET);
+
+            p_threat->InitBullet(p_bullet,g_screen);
             list_threats.push_back(p_threat);
         }
     }
 
 
-    ThreatsObjects* threats_objs = new ThreatsObjects[20];
+    ThreatsObjects* threats_objs = new ThreatsObjects[20]; //quái đứng yên
 
     for (int i=0;i<20;i++)
     {
-        ThreatsObjects* p_threat = (threats_objs + i);
+        ThreatsObjects* p_threat = (threats_objs + i); //chạy từng con quái
         if (p_threat!= NULL)
         {
             p_threat ->LoadImg ("img//threat_level.png" , g_screen);
             p_threat ->set_clips();
-            p_threat ->set_x_pos(700 + i*1200);
+            p_threat ->set_x_pos(700 + i*1200); //random
             p_threat ->set_y_pos(250);
-            p_threat->set_type_move(ThreatsObjects :: STATIC_THREAT);
+            p_threat ->set_type_move(ThreatsObjects :: STATIC_THREAT);
 
             BulletObject* p_bullet = new BulletObject();
+
+            p_bullet->set_bullet_type(BulletObject::LASER_BULLET);
+
             p_threat->InitBullet(p_bullet,g_screen);
 
             list_threats.push_back(p_threat);
@@ -157,6 +194,9 @@ int main(int argc, char* argv[])
 
     PlayerMoney player_money;
     player_money.Init(g_screen);
+
+    PlayerMusic player_music;
+    player_music.InitUnmute(g_screen);
 
     std::vector<ThreatsObjects*> threats_list = MakeThreadList();
 
@@ -192,6 +232,7 @@ int main(int argc, char* argv[])
 
     TextObject money_game;
     money_game.SetColor(TextObject::WHITE_TEXT);
+    int t = 1;
 
     bool is_quit = false;
 
@@ -201,10 +242,28 @@ int main(int argc, char* argv[])
     {
         is_quit = true;
     }
-    else
+    else if (retMenu == 2)
     {
-
+        while (t == 1)
+            {
+                int retTuto = Menu::ShowTutorial(g_screen, font_tuto);
+                if(retTuto == 0)
+                {
+                    int retMenu1 = Menu::ShowMenu(g_screen, font_menu);
+                    if (retMenu1 == 1)
+                        {
+                            is_quit = true;
+                            t = 2;
+                        }
+                    else if(retMenu1 == 2)
+                        {
+                            t = 1;
+                        }
+                    else t = 2; // ấn play game r thì thoát vòng lặp
+            }
+        }
     }
+
 
 
     while (!is_quit)
@@ -218,7 +277,7 @@ int main(int argc, char* argv[])
                 is_quit = true;
             }
 
-            p_player.HandleInputAction(g_event , g_screen );
+            p_player.HandleInputAction(g_event , g_screen, g_sound_player );
         }
         SDL_SetRenderDrawColor (g_screen , RENDER_DRAW_COLOR , RENDER_DRAW_COLOR ,
                                     RENDER_DRAW_COLOR , RENDER_DRAW_COLOR);
@@ -230,7 +289,7 @@ int main(int argc, char* argv[])
 
         p_player.HandleBullet (g_screen);
         p_player.SetMapXY (map_data.start_x_ , map_data.start_y_);
-        p_player.DoPlayer(map_data);
+        p_player.DoPlayer(map_data , g_sound_player);
 
         p_player.Show (g_screen);
 
@@ -252,15 +311,24 @@ int main(int argc, char* argv[])
 
         player_power.Show(g_screen);
         player_money.Show(g_screen);
+        if (p_player.get_mute() == false)
+        {
+            player_music.InitUnmute(g_screen);
+            player_music.Show(g_screen);
+        }
 
-
+        if (p_player.get_mute() == true)
+        {
+            player_music.InitMute(g_screen);
+            player_music.Show(g_screen);
+        }
         for (int i=0 ; i<threats_list.size() ; i++)
         {
             ThreatsObjects* p_threat = threats_list.at(i);
             if (p_threat != NULL)
             {
                 p_threat->SetMapXY(map_data.start_x_ ,map_data.start_y_);
-                p_threat->ImpMoveType (g_screen);
+                p_threat->ImpMoveType (g_screen , map_data);
                 p_threat->DoPlayer (map_data);
                 p_threat->MakeBullet(g_screen , SCREEN_WIDTH ,SCREEN_HEIGHT);
                 p_threat->Show(g_screen);
@@ -273,10 +341,16 @@ int main(int argc, char* argv[])
                     BulletObject* pt_bullet = tBullet_list.at(ii);
                     if (pt_bullet)
                     {
-                        //kiem tra va cham nhan vat va dan
+                        //kiem tra va cham nhan vat va dan quái vật
                         bCol1 = SDLCommonFunc::CheckCollision(pt_bullet ->GetRect() , rect_player);
+                        //dùng get rect khi chỉ có 1 frame
+                        //dùng set clip khi có nhiều frame để tạo animation
                         if (bCol1) //va cham
                         {
+                            if (p_player.get_mute() == false)
+                            {
+                                Mix_PlayChannel(-1, g_sound_player[3],0);
+                            }
                             if (num_die > 3) //dan ban den luc chet
                             {
                                 p_threat->RemoveBullet(ii); //xoa dan
@@ -290,6 +364,13 @@ int main(int argc, char* argv[])
                 bool bCol2 = SDLCommonFunc::CheckCollision(rect_player , rect_threat);
                 if (bCol2 == true || bCol1 ==true || p_player.die != 0 )
                 {
+
+
+                    if (p_player.get_mute() == false)
+                    {
+                        Mix_PlayChannel(-1, g_sound_player[3],0);
+                    }
+
                     int width_exp_frame = exp_main.get_frame_width();
                     int height_exp_frame = exp_main.get_frame_height();
                     for (int ex =0 ; ex < 8 ; ex++)
@@ -363,12 +444,19 @@ int main(int argc, char* argv[])
 
                         SDL_Rect bRect = p_bullet->GetRect();
 
-                        bool bCol = SDLCommonFunc::CheckCollision (bRect , tRect);
+                        bool bCol = SDLCommonFunc::CheckCollision (bRect , tRect); //bullet and threat
                         //kiem tra va cham
                         if (bCol == true) //dan ban trung dich
                         {
-                            mark_value += 10 ;
-                            for (int ex =0 ; ex<NUM_FRAME_EXP ; ex++)
+
+
+                            if (p_player.get_mute() == false)
+                        {
+                            Mix_PlayChannel(-1, g_sound_exp[0],0);
+                        }
+
+                            mark_value += 10 ; //tăng điểm
+                            for (int ex =0 ; ex<NUM_FRAME_EXP ; ex++) //chạy frame vụ nổ
                             {
                                 int x_pos = p_bullet->GetRect().x - frame_exp_width*0.5;
                                 int y_pos = p_bullet->GetRect().y - frame_exp_height*0.5;
@@ -378,7 +466,7 @@ int main(int argc, char* argv[])
                                 exp_threat.Show(g_screen);
                             }
 
-                            p_player.RemoveBullet(r);
+                            p_player.RemoveBullet(r); //xóa đạn
                             obj_threat->Free(); //loai bo threats
                             threats_list.erase(threats_list.begin()+ t);
                         }
@@ -425,6 +513,7 @@ int main(int argc, char* argv[])
 
 
         int money_count = p_player.GetMoneyCount();
+
         std::string money_str = std::to_string (money_count);
 
         money_game.SetText(money_str);
