@@ -45,6 +45,8 @@ namespace Menu {
     // handle menu
     int ShowMenu(SDL_Renderer* des, TTF_Font* font);
     int ShowRestart(SDL_Renderer* des, TTF_Font* font);
+    int ShowTutorial(SDL_Renderer* des, TTF_Font* font);
+    int ShowCre(SDL_Renderer* des, TTF_Font* font);
 }
 
 

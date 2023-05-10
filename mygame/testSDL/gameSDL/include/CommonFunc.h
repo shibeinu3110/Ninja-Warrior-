@@ -6,9 +6,13 @@
 #include <string>
 #include <SDL.h>
 #include <SDL_image.h>
-//#include <SDL_mixer.h>
+#include <SDL_mixer.h>
 #include <SDL_ttf.h>
 
+static Mix_Chunk* g_sound_player[10];
+static Mix_Chunk* g_sound_exp[5];
+static Mix_Chunk* g_theme_music[5];
+static Mix_Chunk* g_general_music[5];
 
 static SDL_Window* g_window = NULL ; //khoi tao bien const window
 static SDL_Renderer* g_screen = NULL;
@@ -60,7 +64,7 @@ typedef struct Map
 
 namespace SDLCommonFunc
 {
-    bool CheckCollision (const SDL_Rect& object1 , const SDL_Rect& object2); //kiem tra va cham
+    bool CheckCollision (const SDL_Rect& object1 , const SDL_Rect& object2); //kiem tra va cham 2 object
     bool CheckFocusWithRect(const int& x, const int& y, const SDL_Rect& rect);
     int  ShowMenu (SDL_Renderer* des , TTF_Font* font);
 

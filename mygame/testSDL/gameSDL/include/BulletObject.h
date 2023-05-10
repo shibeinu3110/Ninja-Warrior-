@@ -26,14 +26,16 @@ class BulletObject : public BaseObject  //ke thua lop base object
         {
             SPHERE_BULLET = 50,
             LASER_BULLET = 51,
+            LIL_BULLET = 52,
         };
 
-        void set_x_val (const int& xVal) {x_val_ = xVal;}
-        void set_y_val (const int& yVal) {y_val_ = yVal;}
+        void set_x_val (const int& xVal) {x_val_ = xVal;} //set x
+        void set_y_val (const int& yVal) {y_val_ = yVal;} //set y
         int get_x_val() const {return x_val_;}
         int get_y_val() const {return y_val_;}
 
         void set_is_move (const bool isMove) {is_move_ = isMove;}
+        //kiểm tra xem đạn có di chuyển không , nếu ra ngoài map thì xóa để đỡ tốn bộ nhớ
         bool get_is_move()  const {return is_move_ ;}
 
 
@@ -45,7 +47,9 @@ class BulletObject : public BaseObject  //ke thua lop base object
 
         void HandleMove (const int& x_border , const int& y_border);
         //xoa dan khi ra khoi map
+        void HandleMovePlayer (const int& x_border , const int& y_border);
         bool LoadImgBullet(SDL_Renderer* des); //load bullet image
+
     private:
         int x_val_; //khi di chuyen
         int y_val_;

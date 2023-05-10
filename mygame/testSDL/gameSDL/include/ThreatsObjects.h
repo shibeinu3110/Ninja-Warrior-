@@ -17,8 +17,13 @@ class ThreatsObjects : public BaseObject
         ~ThreatsObjects();
         enum TypeMove
         {
-            STATIC_THREAT = 0 ,
-            MOVE_IN_SPACE_THREAT = 1 ,
+            STATIC_THREAT = 0 , //đứng yên
+            MOVE_IN_SPACE_THREAT = 1 , //đi trong khoảng a b
+        };
+        enum WalkType   //ham dinh nghia 1 bien
+        {
+            WALK_RIGHT = 0,
+            WALK_LEFT = 1,
         };
 
         void set_x_val(const float& xVal) {x_val_ = xVal;}
@@ -38,22 +43,29 @@ class ThreatsObjects : public BaseObject
         void set_clips();
         bool LoadImg (std::string path , SDL_Renderer* screen);
         void Show (SDL_Renderer* des);
+
         int get_width_frame () const {return width_frame_;}
         int get_height_frame () const {return height_frame_;}
+
         void DoPlayer(Map& gMap);
         void CheckToMap (Map& gMap);
 
-        void InitThreats();
+        void InitThreats(); //khởi tạo threat
 
         void RemoveBullet (const int& idx); // xoa dan khi da ban trung
 
         void set_type_move (const int& typeMove) {type_move_ = typeMove;}
-        void SetAnimationPos (const int& pos_a , const int& pos_b) {animation_a_ = pos_a ;animation_b_ = pos_b;}
+
+        void SetAnimationPos (const int& pos_a , const int& pos_b)
+        {animation_a_ = pos_a ;animation_b_ = pos_b;}
+        //set pos ,move
         void set_input_left (const int& ipLeft) {input_type_.left_ = ipLeft;}
-        void ImpMoveType (SDL_Renderer* screen); //xu ly di chuyen trong 1 khoang
+
+        void ImpMoveType (SDL_Renderer* screen, Map& gMap); //xu ly di chuyen trong 1 khoang
         SDL_Rect GetRectFrame();
 
         std::vector<BulletObject*> get_bullet_list() const {return bullet_list_;}
+        //tạo băng đạn
         void set_bullet_list(const std::vector<BulletObject*>& bl_list)
         {
             bullet_list_ = bl_list;
@@ -78,8 +90,8 @@ class ThreatsObjects : public BaseObject
         int type_move_;
         int animation_a_; //left
         int animation_b_; //right
-        Input input_type_;
-
+        Input input_type_; //static hay move
+        int dir_threats_;
         std::vector<BulletObject*> bullet_list_;
 
 };

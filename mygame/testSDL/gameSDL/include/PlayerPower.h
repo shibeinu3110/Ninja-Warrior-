@@ -30,11 +30,27 @@ public:
     void Init(SDL_Renderer* screen);
     void Show(SDL_Renderer* screen);
     void SetPos(const int &x , const int &y ) {x_pos_ = x ; y_pos_ = y;}
+
 private:
     int x_pos_;
     int y_pos_;
 };
 
+class PlayerMusic : public BaseObject
+{
+public:
+    PlayerMusic();
+    ~PlayerMusic();
+
+    void InitMute(SDL_Renderer* screen);
+    void InitUnmute(SDL_Renderer* screen);
+    void Show(SDL_Renderer* screen);
+    void SetPos(const int &x , const int &y ) {x_pos_ = x ; y_pos_ = y;}
+
+private:
+    int x_pos_;
+    int y_pos_;
+};
 #endif // PLAYERPOWER_H
 
 
